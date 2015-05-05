@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
@@ -143,7 +144,7 @@ public class TreeMergeOutputFormat extends FileOutputFormat<Text, NullWritable> 
         if (LOG.isDebugEnabled()) {
           context.getCounter(SolrCounters.class.getName(), SolrCounters.LOGICAL_TREE_MERGE_TIME.toString()).increment(System.currentTimeMillis() - start);
         }
-        float secs = (System.nanoTime() - start) / (float)(10^9);
+        long secs = TimeUnit.SECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         LOG.info("Logical merge took {} secs", secs);        
         int maxSegments = context.getConfiguration().getInt(TreeMergeMapper.MAX_SEGMENTS_ON_TREE_MERGE, Integer.MAX_VALUE);
         context.setStatus("Optimizing Solr: forcing mtree merge down to " + maxSegments + " segments");
@@ -157,13 +158,13 @@ public class TreeMergeOutputFormat extends FileOutputFormat<Text, NullWritable> 
         if (LOG.isDebugEnabled()) {
           context.getCounter(SolrCounters.class.getName(), SolrCounters.PHYSICAL_TREE_MERGE_TIME.toString()).increment(System.currentTimeMillis() - start);
         }
-        secs = (System.nanoTime() - start) / (float)(10^9);
+        secs = TimeUnit.SECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         LOG.info("Optimizing Solr: done forcing tree merge down to {} segments in {} secs", maxSegments, secs);
         
         start = System.nanoTime();
         LOG.info("Optimizing Solr: Closing index writer");
         writer.close();
-        secs = (System.nanoTime() - start) / (float)(10^9);
+        secs = TimeUnit.SECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         LOG.info("Optimizing Solr: Done closing index writer in {} secs", secs);
         context.setStatus("Done");
       } finally {

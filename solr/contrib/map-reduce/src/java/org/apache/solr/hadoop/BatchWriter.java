@@ -204,7 +204,7 @@ class BatchWriter {
     long start = System.nanoTime();
     solr.optimize(true, false, maxSegments);
     context.getCounter(SolrCounters.class.getName(), SolrCounters.PHYSICAL_REDUCER_MERGE_TIME.toString()).increment(System.nanoTime() - start);
-    float secs = (System.nanoTime() - start) / (float)(10^9);
+    long secs = TimeUnit.SECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
     LOG.info("Optimizing Solr: done forcing merge down to {} segments in {} secs", maxSegments, secs);
     context.setStatus("Committing Solr Phase 2");
     solr.commit(true, false);

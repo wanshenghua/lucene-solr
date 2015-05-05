@@ -164,7 +164,7 @@ class GoLive {
       return true;
     } finally {
       shutdownNowAndAwaitTermination(executor);
-      float secs = (System.nanoTime() - start) / (float)(10^9);
+      long secs = TimeUnit.SECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
       LOG.info("Live merging of index shards into Solr cluster took " + secs + " secs");
       if (success) {
         LOG.info("Live merging completed successfully");
